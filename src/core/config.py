@@ -18,7 +18,6 @@ class AppSettings(BaseSettings):
     database_dsn: PostgresDsn
 
     class Config:
-        env_file = '.env'
         extra = 'ignore'
 
 
@@ -28,7 +27,6 @@ class TokenSettings(BaseSettings):
     access_token_expire_minutes: int = 30
 
     class Config:
-        env_file = '.env'
         extra = 'ignore'
 
 

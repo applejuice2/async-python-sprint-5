@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./.env
+    healthcheck:
+      test: "pg_isready -U postgres"
+      interval: 3s
+  web:
+    build:
+      context: ../src
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - files_volume:/files_vol
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+       - ./.env
+
+volumes:
+  postgres:
+  files_volume:

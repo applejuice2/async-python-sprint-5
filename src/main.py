@@ -1,6 +1,5 @@
 import logging
 
-import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
@@ -18,11 +17,3 @@ app = FastAPI(
 
 for router in routers:
     app.include_router(router, prefix='/api/v1')
-
-if __name__ == '__main__':
-    logger = logging.info('Starting app and uvicorn ASGI server.')
-    uvicorn.run(
-        'main:app',
-        host=app_settings.project_host,
-        port=app_settings.project_port,
-    )

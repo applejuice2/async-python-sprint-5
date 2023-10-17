@@ -1,16 +1,14 @@
-from typing import Any
-
 from models.entities import User as UserModel
 from schemas.user import UserSchemaAdd
 from utils.repository import SQLAlchemyRepository
 
 
-class RepositoryURL(
+class RepositoryUser(
     SQLAlchemyRepository[
-        UserModel, UserSchemaAdd, Any
+        UserModel, UserSchemaAdd
     ]
 ):
     pass
 
 
-user_repository = RepositoryURL(UserModel)
+user_repository = RepositoryUser(UserModel)

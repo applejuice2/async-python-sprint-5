@@ -1,4 +1,5 @@
 from datetime import timedelta
+from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordRequestForm
@@ -7,7 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from schemas.user import UserSchemaAdd, UserWithHashedPasswordAdd
 from utils.repository import AbstractRepository
 from models.entities import User as UserModel
-from utils.token import Hasher, create_access_token
+from utils.auth_token import Hasher, create_access_token
 from core.config import token_settings
 
 
@@ -20,7 +21,7 @@ class UserService:
         self.session: AsyncSession = session
         self.user_repo: AbstractRepository = user_repo
 
-    async def add_user(self, user: UserSchemaAdd):
+    async def add_user(self, user: UserSchemaAdd) -> Optional[str]:
         hashed_password = Hasher.get_password_hash(user.password)
         user_with_hashed_password = UserWithHashedPasswordAdd(
             username=user.username,
@@ -36,8 +37,10 @@ class UserService:
             return
         username = user_model.username
         return username
-    
-    async def get_user_token(self, user: OAuth2PasswordRequestForm):
+
+    async def get_user_token(
+        self, user: OAuth2PasswordRequestForm
+    ) -> tuple[Optional[str], str]:
         token_type = 'bearer'
         user_instanse: UserModel = await self.user_repo.get_one(
             self.session,
@@ -45,14 +48,20 @@ class UserService:
         )
         if not user_instanse:
             return None, token_type
-        if not Hasher.verify_password(user.password, user_instanse.hashed_password):
+        if not Hasher.verify_password(
+            user.password,
+            user_instanse.hashed_password
+        ):
             return None, token_type
 
         access_token_expires = timedelta(
             minutes=token_settings.access_token_expire_minutes
         )
         access_token = create_access_token(
-            data={'sub': user_instanse.email, 'other_custom_data': [1, 2, 3, 4]},
+            data={
+                'sub': str(user_instanse.id),
+                'other_custom_data': [1, 2, 3]
+            },
             expires_delta=access_token_expires,
         )
         return access_token, token_type

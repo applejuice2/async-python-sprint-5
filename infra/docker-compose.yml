@@ -18,7 +18,7 @@ services:
       dockerfile: Dockerfile
     restart: always
     volumes:
-      - files_volume:/files_vol
+      - files_volume:${MOUNTPOINT}
     ports:
       - "8000:8000"
     depends_on:

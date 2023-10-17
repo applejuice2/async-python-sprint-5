@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Generic, Type, TypeVar
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import insert, select, update
+from sqlalchemy import insert, select
 from sqlalchemy.orm import joinedload
 from pydantic import BaseModel
 
@@ -10,7 +10,6 @@ from models.base import Base
 
 ModelType = TypeVar('ModelType', bound=Base)
 CreateSchemaType = TypeVar('CreateSchemaType', bound=BaseModel)
-UpdateSchemaType = TypeVar('UpdateSchemaType', bound=BaseModel)
 
 
 class AbstractRepository(ABC):
@@ -27,6 +26,9 @@ class AbstractRepository(ABC):
     async def add_many(self, *args, **kwargs):
         raise NotImplementedError
 
+    async def get_many(self, *args, **kwargs):
+        raise NotImplementedError
+
     async def get_one_with_dependencies(self, *args, **kwargs):
         raise NotImplementedError
 
@@ -34,8 +36,7 @@ class AbstractRepository(ABC):
 class SQLAlchemyRepository(
     AbstractRepository,
     Generic[ModelType,
-            CreateSchemaType,
-            UpdateSchemaType]
+            CreateSchemaType]
 ):
     def __init__(self, model: Type[ModelType]):
         self.model = model
@@ -57,22 +58,6 @@ class SQLAlchemyRepository(
         res = await session.execute(stmt)
         return res.scalar_one_or_none()
 
-    async def edit_one(
-        self,
-        session: AsyncSession,
-        obj: UpdateSchemaType,
-        **filter_by: Any,
-    ) -> ModelType:
-        obj_dict = obj.model_dump()
-        stmt = (update(self.model)
-                .values(**obj_dict)
-                .filter_by(**filter_by)
-                .returning(self.model))
-        res = await session.execute(stmt)
-        result_object = res.fetchone()
-        await session.commit()
-        return result_object
-
     async def add_many(
         self,
         session: AsyncSession,
@@ -84,6 +69,15 @@ class SQLAlchemyRepository(
         result_objects = res.fetchall()
         await session.commit()
         return result_objects
+
+    async def get_many(
+        self,
+        session: AsyncSession,
+        **filter_by: Any,
+    ) -> list[ModelType]:
+        stmt = select(self.model).filter_by(**filter_by)
+        result = await session.execute(stmt)
+        return result.scalars().all()
 
     async def get_one_with_dependencies(
         self,

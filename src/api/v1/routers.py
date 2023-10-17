@@ -1,7 +1,7 @@
 from .auth import router as router_auth
-# from .db import router as router_db
+from .file import router as router_file
 
 routers = [
     router_auth,
-    # router_db,
+    router_file,
 ]

@@ -16,6 +16,7 @@ class AppSettings(BaseSettings):
     project_port: int = 8000
     echo: bool = True
     database_dsn: PostgresDsn
+    mountpoint: str
 
     class Config:
         extra = 'ignore'

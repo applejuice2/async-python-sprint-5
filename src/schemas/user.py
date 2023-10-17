@@ -6,6 +6,7 @@ from pydantic import BaseModel, EmailStr, field_validator
 class UserSchemaCreated(BaseModel):
     username: str
 
+
 class UserSchemaAdd(UserSchemaCreated):
     email: EmailStr
     # https://stackoverflow.com/questions/19605150/regex-for-password-must-contain-at-least-eight-characters-at-least-one-number-a
@@ -21,9 +22,13 @@ class UserSchemaAdd(UserSchemaCreated):
     @classmethod
     def validate_password(cls, password: str) -> str:
         if not re.search(r'[a-z]', password):
-            raise ValueError('Password should have at least one lowercase letter')
+            raise ValueError(
+                'Password should have at least one lowercase letter'
+            )
         if not re.search(r'[A-Z]', password):
-            raise ValueError('Password should have at least one uppercase letter')
+            raise ValueError(
+                'Password should have at least one uppercase letter'
+            )
         if not re.search(r'\d', password):
             raise ValueError('Password should have at least one digit')
         if not re.match(r'^[a-zA-Z\d]*$', password):

@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from .dependencies import user_service
 from schemas.user import UserSchemaCreated
 from schemas.user import UserSchemaAdd
-from schemas.token import TokenSchema
+from schemas.auth_token import TokenSchema
 from services.user import UserService
 
 router = APIRouter(

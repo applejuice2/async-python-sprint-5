@@ -6,6 +6,117 @@
 
 Реализовать **http-сервис**, который обрабатывает поступающие запросы. Сервер стартует по адресу `http://127.0.0.1:8080` (дефолтное значение, может быть изменено).
 
+## Запуск проекта.
+
+Для запуска необходимо:
+    
+   - Создать файл .env в директории infra. Пример файла находится в файле .env-example (Можно полностью скопировать значения оттуда, всё будет работать корректно).
+   - Установить Docker и Docker-compose на хост-машину.
+   - Находясь в директорри _infra_ ввести команду:
+```
+	docker-compose up -d --build
+```
+- Swagger документация доступна по адресу:
+   http://127.0.0.1:8000/api/openapi
+ 
+ ## Доступные эндпоинты.
+- POST /api/v1/auth/sign_up (Регистрация)
+
+**Request:**
+```json
+{
+  "username": "string",
+  "email": "user@example.com",
+  "password": "APPLEjuice2"
+}
+```
+**Response:**
+```json
+{
+  "username": "string"
+}
+```
+</br>
+</br>
+
+- POST /api/v1/auth/sign_in (Получение JWT токена)
+
+**Request:**
+```json
+{
+  "username": "string",
+  "password": "APPLEjuice2"
+}
+```
+**Response:**
+```json
+{
+  "access_token": "string",
+  "token_type": "string"
+}
+```
+
+</br>
+</br>
+
+- POST /api/v1/files/upload (Загрузка файла)
+
+**Request:**
+```
+uploading_file 
+```
+```
+{"path": "/new_file/int"}
+```
+_При указании слэша в конце "path" ("/new_file/int/") создаются директории, а название файла берётся от самого файла. При отсутствии слэша в конце "path" ("/new_file/int") создаются директории, а названии файла берётся из последнего значения после слэша (в данном случае - __int__)_
+**Response:**
+```json
+{
+  "id": "3b63729e-f391-4597-ad75-e3ac9b5e4399",
+  "path": "/new_file/int",
+  "name": "int",
+  "created_at": "2023-10-17T04:50:22.176255",
+  "size": 1214597,
+  "is_downloadable": true
+}
+```
+
+</br>
+</br>
+
+- GET /api/v1/files/list (Получение списка загруженных пользователем файлов)
+
+**Response:**
+```json
+{
+  "account_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "files": [
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "path": "string",
+      "name": "string",
+      "created_at": "2023-10-17T05:21:25.364Z",
+      "size": 0,
+      "is_downloadable": true
+    }
+  ]
+}
+```
+
+</br>
+</br>
+
+- POST /api/v1/files/download (Скачивание файла)
+
+**Request:**
+```
+/?path=<path-to-file>||<file-meta-id>
+```
+**Response:**
+```
+downloading_file 
+```
+
 <details>
 <summary> Список необходимых эндпойнтов. </summary>
 

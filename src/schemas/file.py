@@ -79,7 +79,7 @@ class UploadedFileWithoutVolumePathSchema(UploadedFileSchema):
 
 class ListofUploadFilesSchema(BaseModel):
     account_id: UUID
-    files: list[UploadedFileSchema]
+    files: list[UploadedFileWithoutVolumePathSchema]
 
 
 class FileDownloadSchema(BaseModel):

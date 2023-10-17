@@ -20,7 +20,7 @@
    http://127.0.0.1:8000/api/openapi
  
  ## Доступные эндпоинты.
-- POST /api/v1/auth/sign_up (Регистрация)
+- POST /api/v1/auth/sign_up (Регистрация)  
 
 **Request:**
 ```json
@@ -39,7 +39,7 @@
 </br>
 </br>
 
-- POST /api/v1/auth/sign_in (Получение JWT токена)
+- POST /api/v1/auth/sign_in (Получение JWT токена)  
 
 **Request:**
 ```json
@@ -59,7 +59,7 @@
 </br>
 </br>
 
-- POST /api/v1/files/upload (Загрузка файла)
+- POST /api/v1/files/upload (Загрузка файла)  
 
 **Request:**
 ```
@@ -68,7 +68,7 @@ uploading_file
 ```
 {"path": "/new_file/int"}
 ```
-_При указании слэша в конце "path" ("/new_file/int/") создаются директории, а название файла берётся от самого файла. При отсутствии слэша в конце "path" ("/new_file/int") создаются директории, а названии файла берётся из последнего значения после слэша (в данном случае - __int__)_
+_При указании слэша в конце "path" ("/new_file/int/") создаются директории, а название файла берётся от самого файла. При отсутствии слэша в конце "path" ("/new_file/int") создаются директории, а названии файла берётся из последнего значения после слэша (в данном случае - __int__)_  
 **Response:**
 ```json
 {
@@ -84,7 +84,7 @@ _При указании слэша в конце "path" ("/new_file/int/") со
 </br>
 </br>
 
-- GET /api/v1/files/list (Получение списка загруженных пользователем файлов)
+- GET /api/v1/files/list (Получение списка загруженных пользователем файлов)  
 
 **Response:**
 ```json
@@ -106,7 +106,7 @@ _При указании слэша в конце "path" ("/new_file/int/") со
 </br>
 </br>
 
-- POST /api/v1/files/download (Скачивание файла)
+- POST /api/v1/files/download (Скачивание файла)  
 
 **Request:**
 ```
@@ -115,6 +115,18 @@ _При указании слэша в конце "path" ("/new_file/int/") со
 **Response:**
 ```
 downloading_file 
+```
+
+</br>
+</br>
+
+- GET /api/v1/monitorng/db_health_check (Мониторинг БД)  
+
+**Response:**
+```
+{
+  "detail": "Database is abailable"
+}
 ```
 
 <details>

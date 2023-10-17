@@ -6,12 +6,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from jose import jwt
 from jose import JWTError
 from jose.exceptions import ExpiredSignatureError
+from pydantic_core import MultiHostUrl
 
-from db.db import async_session
+from core.config import app_settings
 from core.config import token_settings
+from db.db import async_session
 from models.entities import User
 from services.user import UserService
 from services.file import FileService
+from services.db import DBService
 from repositories.user import user_repository
 from repositories.file import file_repository
 from schemas.file import UploadFileSchema
@@ -68,3 +71,7 @@ def get_upload_schema(path_data: str = Form(...)) -> UploadFileSchema:
         return UploadFileSchema.parse_raw(path_data)
     except ValueError as e:
         raise HTTPException(status_code=400, detail="Invalid path data") from e
+
+
+def db_service(dsn: MultiHostUrl = app_settings.database_dsn) -> DBService:
+    return DBService(dsn)

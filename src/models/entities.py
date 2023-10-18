@@ -21,7 +21,7 @@ class PositiveInteger(TypeDecorator):
 
 
 class User(Base):
-    __tablename__ = 'user'
+    __tablename__ = 'users'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     username = Column(String(length=30), nullable=False, unique=True)
@@ -37,11 +37,11 @@ class User(Base):
 
 
 class File(Base):
-    __tablename__ = "file"
+    __tablename__ = 'files'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True),
-                     ForeignKey('user.id', ondelete='CASCADE'),
+                     ForeignKey('users.id', ondelete='CASCADE'),
                      nullable=False)
     name = Column(String(length=255), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)

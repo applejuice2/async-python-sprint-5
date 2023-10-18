@@ -45,8 +45,8 @@ class File(Base):
                      nullable=False)
     name = Column(String(length=255), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
-    # NOTE Путь и так будет уникальным, так как на 
-    # уровне сервиса уже есть проверка в ФС, чтобы выкидывалось 
+    # NOTE Путь и так будет уникальным, так как на
+    # уровне сервиса уже есть проверка в ФС, чтобы выкидывалось
     # исключение, если по указанному пути уже есть файл/директория.
     path = Column(String(length=255), nullable=False)
     size = Column(PositiveInteger)

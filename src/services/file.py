@@ -54,7 +54,7 @@ class FileService:
             final_path.parent.mkdir(parents=True, exist_ok=True)
         except FileExistsError:
             raise HTTPException(
-                status_code=400, 
+                status_code=400,
                 detail=(
                     'Cannot create directory because a file '
                     f'named {final_path.parent.name} already exists.'

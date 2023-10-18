@@ -8,4 +8,4 @@ if [[ -z "$PROJECT_HOST" || -z "$PROJECT_PORT" ]]; then
   exit 1
 fi
 
-uvicorn main:app --host $PROJECT_HOST --port $PROJECT_PORT
+python3 -m gunicorn --name file_service -k uvicorn.workers.UvicornWorker -w 1 -b $PROJECT_HOST:$PROJECT_PORT  main:app

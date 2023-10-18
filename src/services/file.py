@@ -39,20 +39,27 @@ class FileService:
             # NOTE Иначе это имя файла
             final_path = Path(path_str)
 
-        # Проверка, существует ли путь и является ли он директорией, когда
-        # пользователи хотят создать файл с именем,
-        # которое уже занято директорий
-        if final_path.exists() and final_path.is_dir():
+        # Проверка, существует ли уже файл по указанному пути в ФС.
+        if final_path.exists():
             raise HTTPException(
                 status_code=400,
                 detail=(
-                    f'Path "{final_path}" already exists as a directory. '
+                    f'Path {final_path} is busy. '
                     'Please choose a different name.'
                 )
             )
 
         # NOTE Создаем необходимые директории
-        final_path.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            final_path.parent.mkdir(parents=True, exist_ok=True)
+        except FileExistsError:
+            raise HTTPException(
+                status_code=400, 
+                detail=(
+                    'Cannot create directory because a file '
+                    f'named {final_path.parent.name} already exists.'
+                )
+            )
 
         # NOTE Сохраняем файл и находим его размер
         with final_path.open('wb') as buffer:

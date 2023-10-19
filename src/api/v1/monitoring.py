@@ -8,7 +8,7 @@ from services.db import DBService
 from .dependencies import db_service
 
 router = APIRouter(
-    prefix='/monitorng',
+    prefix='/monitoring',
     tags=['Monitoring'],
 )
 

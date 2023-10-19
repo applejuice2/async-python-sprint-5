@@ -2,6 +2,7 @@ version: '3.7'
 
 services:
   db:
+    container_name: db
     image: postgres:13.0-alpine
     volumes:
       - postgres:/var/lib/postgresql/data/
@@ -13,6 +14,7 @@ services:
       test: "pg_isready -U postgres"
       interval: 3s
   web:
+    container_name: web
     build:
       context: ../src
       dockerfile: Dockerfile
@@ -20,7 +22,7 @@ services:
     volumes:
       - files_volume:${MOUNTPOINT}
     ports:
-      - "8000:8000"
+      - ${PROJECT_PORT}:${PROJECT_PORT}
     depends_on:
       db:
         condition: service_healthy

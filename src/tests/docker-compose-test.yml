@@ -1,0 +1,33 @@
+version: '3.7'
+
+services:
+  testing_db:
+      container_name: testing_db
+      image: postgres:13.0-alpine
+      ports:
+        - "5433:5432"
+      env_file:
+        - ./.env
+      healthcheck:
+        test: "pg_isready -U postgres"
+        interval: 3s
+  testing_web:
+    container_name: testing_web
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - test_files_volume:${MOUNTPOINT}
+    ports:
+      - ${PROJECT_PORT}:${PROJECT_PORT}
+    depends_on:
+      testing_db:
+        condition: service_healthy
+    env_file:
+      - ./.env
+    environment:
+      - PYTHONPATH=/app
+
+volumes:
+  test_files_volume:

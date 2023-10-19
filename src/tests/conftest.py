@@ -29,22 +29,6 @@ TABLES = [User, File]
 TEST_FILES_DIRECTORY = app_settings.mountpoint
 
 
-# @pytest_asyncio.fixture(scope="function")
-# async def clean_database():
-#     # Очистка до теста
-#     async with SessionLocal() as session:
-#         for table in TABLES:
-#             await session.execute(delete(table))
-#         await session.commit()
-
-#     # Запуск теста
-#     yield
-
-#     # Очистка после теста
-#     async with SessionLocal() as session:
-#         for table in TABLES:
-#             await session.execute(delete(table))
-#         await session.commit()
 @pytest_asyncio.fixture(scope="function")
 async def clean_before_database():
     # Очистка до теста
@@ -69,7 +53,7 @@ async def clean_after_database():
         await session.commit()
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest_asyncio.fixture(scope="module")
 async def clean_before_filesystem():
     # NOTE Удаляем все файлы внутри каталога
     # перед выполнением теста (на всякий случай)
@@ -83,7 +67,7 @@ async def clean_before_filesystem():
     yield
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest_asyncio.fixture(scope="module")
 async def clean_after_filesystem():
     # Запуск теста
     yield
@@ -115,28 +99,68 @@ async def ac() -> AsyncGenerator[AsyncClient, None]:
 
 
 @pytest_asyncio.fixture(scope="function")
-async def test_user(ac: AsyncClient) -> dict:
-    """Фикстура для регистрации пользователя."""
+async def test_user_for_auth(ac: AsyncClient) -> dict:
+    """Фикстура для регистрации пользователя для авторизации."""
     user_data = {
-        "username": "appleJUICE2",
+        "username": "appleJUICE1",
         "email": "apple@juice.com",
-        "password": "testPASSWORD99"
+        "password": "testPASSWORD88"
     }
 
-    await ac.post('/api/v1/auth/sign_up', json=user_data)
+    response = await ac.post('/api/v1/auth/sign_up', json=user_data)
+    assert response.status_code == 201, response.text
 
     return user_data
 
 
-@pytest_asyncio.fixture(scope="function")
-async def token(ac: AsyncClient, test_user) -> str:
+@pytest_asyncio.fixture(scope="module")
+async def test_user_for_file(ac: AsyncClient) -> dict:
+    """Фикстура для регистрации пользователя для файла."""
+    user_data = {
+        "username": "appleJUICE2",
+        "email": "smth@juice.com",
+        "password": "testPASSWORD99"
+    }
+
+    response = await ac.post('/api/v1/auth/sign_up', json=user_data)
+    assert response.status_code == 201, response.text
+
+    return user_data
+
+
+@pytest_asyncio.fixture(scope="module")
+async def token(ac: AsyncClient, test_user_for_file) -> str:
     """Фикстура для создания пользователя и JWT токена"""
     data = {
-        "username": test_user["username"],
-        "password": test_user["password"]
+        "username": test_user_for_file["username"],
+        "password": test_user_for_file["password"]
     }
 
     response = await ac.post("/api/v1/auth/sign_in", data=data)
 
     jwt_token = response.json().get("access_token")
     return jwt_token
+
+
+@pytest_asyncio.fixture(scope="module")
+async def clean_before_database_for_file():
+    # Очистка до теста
+    async with SessionLocal() as session:
+        for table in TABLES:
+            await session.execute(delete(table))
+        await session.commit()
+
+    # Запуск теста
+    yield
+
+
+@pytest_asyncio.fixture(scope="module")
+async def clean_after_database_for_file():
+    # Запуск теста
+    yield
+
+    # Очистка после теста
+    async with SessionLocal() as session:
+        for table in TABLES:
+            await session.execute(delete(table))
+        await session.commit()

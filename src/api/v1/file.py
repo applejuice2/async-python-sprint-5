@@ -64,7 +64,7 @@ async def get_uploaded_files(
 
 
 @router.get(
-    '/files/download',
+    '/download',
     status_code=status.HTTP_200_OK,
     description='Download File',
     response_description='Downloaded File',

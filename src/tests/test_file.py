@@ -21,10 +21,8 @@ def create_mock_file(
 async def test_upload_file(
     ac: AsyncClient,
     clean_before_filesystem,
-    clean_before_database,
-    token,
-    clean_after_database,
-    clean_after_filesystem
+    clean_before_database_for_file,
+    token
 ):
     # Создаем моковый файл
     mock_file = create_mock_file()
@@ -63,5 +61,23 @@ async def test_download_file_by_path(
         f"/api/v1/files/download?path={test_file_path}",
         headers={"Authorization": f"Bearer {token}"}
     )
-    print(response.json)
+    print(response)
     assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_list_of_licenses(
+    ac: AsyncClient,
+    token,
+    # clean_after_database_for_file,
+    # clean_after_filesystem
+):
+
+    response = await ac.get(
+        "/api/v1/files/list",
+    )
+
+    assert response.status_code == 200
+    assert response.json["files"][0]["path"] == "/testfile"
+    assert response.json["files"][0]["name"] == "testfile"
+    assert response.json()["is_downloadable"] is True

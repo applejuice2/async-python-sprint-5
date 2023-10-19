@@ -21,11 +21,14 @@ async def test_sign_up(
 
 @pytest.mark.asyncio
 async def test_sign_in(
-    ac: AsyncClient, clean_before_database, test_user, clean_after_database
+    ac: AsyncClient,
+    clean_before_database,
+    test_user_for_auth,
+    clean_after_database
 ):
     data = {
-        "username": test_user["username"],
-        "password": test_user["password"]
+        "username": test_user_for_auth["username"],
+        "password": test_user_for_auth["password"]
     }
 
     response = await ac.post(
